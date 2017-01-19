@@ -1,0 +1,25 @@
+[Unit]
+Description=Neo4j hot backup
+After=neo4j-blue@%i.service
+Requires=neo4j-blue@%i.service
+
+[Service]
+Environment="DOCKER_APP_VERSION=latest"
+TimeoutStartSec=0
+KillMode=none
+
+ExecStartPre=-/bin/bash -c '/usr/bin/docker kill "$(docker ps -q --filter=name=%p-%i_)" > /dev/null 2>&1'
+ExecStartPre=-/bin/bash -c '/usr/bin/docker rm "$(docker ps -q --filter=name=%p-%i_)" > /dev/null 2>&1'
+ExecStartPre=/bin/bash -c '/usr/bin/docker exec $(docker ps | grep ft-neo4j | col | cut -f1) ./bin/neo4j-backup --host=127.0.0.1 --to=/data/backup -verify false'
+
+ExecStart=/bin/bash -c '\
+	/usr/bin/docker run --rm --name %p-%i_$(uuidgen) \
+	--env AWS_ACCESS_KEY_ID=$(/usr/bin/etcdctl get /ft/_credentials/aws/aws_access_key_id) \
+	--env AWS_SECRET_ACCESS_KEY=$(/usr/bin/etcdctl get /ft/_credentials/aws/aws_secret_access_key) \
+	--env AWS_BUCKET_NAME=com.ft.coco-neo4j-backup \
+	--env S3_DIR=$(/usr/bin/etcdctl get /ft/config/environment_tag) \
+	-v /vol/neo4j-blue-1/backup:/backup \
+	coco/neo4j-hot-backup:$DOCKER_APP_VERSION'
+
+[X-Fleet]
+MachineOf=neo4j-blue@%i.service

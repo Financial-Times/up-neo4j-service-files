@@ -1,0 +1,11 @@
+[Unit]
+Description=Runs the Neo4j hot backup job
+
+[Timer]
+OnCalendar=14:00
+
+[Install]
+WantedBy=timers.target
+
+[X-Fleet]
+MachineOf=neo4j-blue@%i.service

@@ -1,0 +1,34 @@
+[Unit]
+Description=Job to clean up docker images + containers on hosts
+Requires=docker.service
+Wants=docker.socket
+
+[Service]
+Environment="DOCKER_APP_VERSION=latest"
+TimeoutStartSec=0
+# Change killmode from "control-group" to "none" to let Docker remove
+# work correctly.
+KillMode=none
+ExecStartPre=-/bin/bash -c '/usr/bin/docker kill "$(docker ps -q --filter=name=%p_)" > /dev/null 2>&1'
+ExecStartPre=-/bin/bash -c '/usr/bin/docker rm "$(docker ps -q --filter=name=%p_)" > /dev/null 2>&1'
+ExecStart=/bin/bash -c '\
+  while true; do \
+    docker run --rm --name %p_$(uuidgen) \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    coco/docker-gc:$DOCKER_APP_VERSION || docker rmi coco/docker-gc:$DOCKER_APP_VERSION; \
+    sleep 3600; \
+  done'
+
+ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=%p_)"'
+Restart=on-failure
+RestartSec=60
+Nice=5
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+Global=true
+

@@ -1,0 +1,37 @@
+[Unit]
+Description=Neo4j Blue
+After=docker.service
+Requires=docker.service
+Wants=neo4j-blue-sidekick@%i.service neo4j-read-blue-sidekick@%i.service
+
+[Service]
+Environment="DOCKER_APP_VERSION=latest"
+TimeoutStartSec=0
+# Change killmode from "control-group" to "none" to let Docker remove
+# work correctly.
+KillMode=none
+ExecStartPre=-/bin/bash -c '/usr/bin/docker kill "$(docker ps -q --filter=name=^/%p-%i_)" > /dev/null 2>&1'
+ExecStartPre=-/bin/bash -c '/usr/bin/docker rm "$(docker ps -q --filter=name=^/%p-%i_)" > /dev/null 2>&1'
+ExecStartPre=/bin/bash -c 'docker history coco/ft-neo4j:$DOCKER_APP_VERSION > /dev/null 2>&1 || docker pull coco/ft-neo4j:$DOCKER_APP_VERSION'
+
+# See neo4j-red@.service for the other neo4j instance.
+# Also see https://neo4j.com/developer/docker-2-x/ for configuration options.
+ExecStart=/bin/sh -c "\
+    export ENV=$(/usr/bin/etcdctl get /ft/config/environment_tag); \
+    /usr/bin/docker run --rm --name %p-%i_$(uuidgen) \
+    --memory "10g" \
+    -v /vol/%p-%i/:/data -p 7474:7474 \
+    --env "NEO4J_AUTH=none" \
+    --env "NEO4J_HEAP_MEMORY=3584" \
+    --env "NEO4J_CACHE_MEMORY=1024m" \
+    --env "GRAPHITE_ENABLED=true" \
+    --env "GRAPHITE_ADDRESS=graphite.ft.com:2003" \
+    --env "GRAPHITE_PREFIX=coco.services.$ENV.neo4j-blue.%i" \
+    coco/ft-neo4j:$DOCKER_APP_VERSION"
+
+ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=^/%p-%i_)"'
+Restart=on-failure
+RestartSec=60
+
+[X-Fleet]
+MachineMetadata=persistent_tag=2
