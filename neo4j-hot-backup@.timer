@@ -8,4 +8,4 @@ OnCalendar=14:00
 WantedBy=timers.target
 
 [X-Fleet]
-MachineOf=neo4j-blue@%i.service
+MachineOf=neo4j@1.service

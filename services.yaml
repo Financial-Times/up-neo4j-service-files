@@ -11,3 +11,8 @@ services:
 - name: splunk-forwarder.service
 - name: tunnel-registrator.service
   version: v1.0.3
+- name: neo4j-sidekick@.service
+  count: 3
+- name: neo4j@.service
+  count: 3
+  sequentialDeployment: true

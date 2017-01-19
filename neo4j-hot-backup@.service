@@ -1,7 +1,7 @@
 [Unit]
 Description=Neo4j hot backup
-After=neo4j-blue@%i.service
-Requires=neo4j-blue@%i.service
+After=neo4j@1.service
+Requires=neo4j@%i.service
 
 [Service]
 Environment="DOCKER_APP_VERSION=latest"
@@ -22,4 +22,4 @@ ExecStart=/bin/bash -c '\
 	coco/neo4j-hot-backup:$DOCKER_APP_VERSION'
 
 [X-Fleet]
-MachineOf=neo4j-blue@%i.service
+MachineOf=neo4j@1.service

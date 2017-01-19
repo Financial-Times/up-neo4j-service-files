@@ -14,7 +14,6 @@ ExecStartPre=-/bin/bash -c '/usr/bin/docker kill "$(docker ps -q --filter=name=^
 ExecStartPre=-/bin/bash -c '/usr/bin/docker rm "$(docker ps -q --filter=name=^/%p-%i_)" > /dev/null 2>&1'
 ExecStartPre=/bin/bash -c 'docker history coco/ft-neo4j:$DOCKER_APP_VERSION > /dev/null 2>&1 || docker pull coco/ft-neo4j:$DOCKER_APP_VERSION'
 
-# See neo4j-red@.service for the other neo4j instance.
 # Also see https://neo4j.com/developer/docker-2-x/ for configuration options.
 ExecStart=/bin/sh -c "\
     export ENV=$(/usr/bin/etcdctl get /ft/config/environment_tag); \
@@ -34,4 +33,4 @@ Restart=on-failure
 RestartSec=60
 
 [X-Fleet]
-MachineMetadata=persistent_tag=2
+Conflicts=neo4j@*.service

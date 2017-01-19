@@ -1,14 +1,13 @@
 [Unit]
-Description=Neo4j Blue Sidekick
-BindsTo=neo4j-blue@%i.service
-After=neo4j-blue@%i.service
+Description=Neo4j Sidekick
+BindsTo=neo4j@%i.service
+After=neo4j@%i.service
 
 [Service]
 RemainAfterExit=yes
 ExecStart=/bin/sh -c "\
   export SERVICE=$(echo %p | sed 's/-sidekick//g'); \
   etcdctl mkdir /ft/services/$SERVICE/servers; \
-  etcdctl set /vulcand/frontends/$SERVICE-db/frontend '{\"Type\": \"http\", \"BackendId\": \"vcb-neo4j-blue\", \"Route\": \"HeaderRegexp(`Referer`, `.*__neo4j-blue.*`)\", \"Settings\": { \"TrustForwardHeader\": true, \"PassHostHeader\": true }}'; \
   while [ -z $PORT ]; do \
      sleep 5; \
      CONTAINER_NAME=$(docker ps -q --filter=name=^/\"$SERVICE\"-%i_); \
@@ -16,7 +15,7 @@ ExecStart=/bin/sh -c "\
   done; \
   etcdctl set /ft/services/$SERVICE/servers/%i http://%H:$PORT;"
 
-ExecStop=-/bin/bash -c 'etcdctl rm /ft/services/neo4j-blue/servers/%i'
+ExecStop=-/bin/bash -c 'etcdctl rm /ft/services/neo4j/servers/%i'
 
 [X-Fleet]
-MachineOf=neo4j-blue@%i.service
+MachineOf=neo4j@%i.service
