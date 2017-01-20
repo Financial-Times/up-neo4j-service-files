@@ -1,0 +1,10 @@
+[Unit]
+Description=Neo4j Sidekick
+BindsTo=neo4j@%i.service
+After=neo4j@%i.service
+
+[Service]
+RemainAfterExit=yes
+
+[X-Fleet]
+MachineOf=neo4j@%i.service
