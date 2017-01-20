@@ -1,8 +1,7 @@
 [Unit]
-Description=Neo4j Blue
+Description=Neo4j
 After=docker.service
 Requires=docker.service
-Wants=neo4j-blue-sidekick@%i.service neo4j-read-blue-sidekick@%i.service
 
 [Service]
 Environment="DOCKER_APP_VERSION=latest"

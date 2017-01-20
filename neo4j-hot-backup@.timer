@@ -7,5 +7,3 @@ OnCalendar=14:00
 [Install]
 WantedBy=timers.target
 
-[X-Fleet]
-MachineOf=neo4j@1.service
