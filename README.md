@@ -2,9 +2,13 @@
 Configuration for the services deployed in the docker cluster that hosts Neo4J database
 
 ## Example of deploying neo4j cluster with coco-pub-provisioner in test environment
-NB! Windows users should run these commands from CoCo Management Server (a linux jump-off box)  
-Grab values for env vars from LastPass  
 
+NB! Windows users should run these commands from a Linux jump-off box.  
+There is already a CF   [CoCo Management Server](https://github.com/Financial-Times/coco-pub-provisioner/blob/master/cloudformation/README.md) CF template for AWS.   
+
+Grab values for env vars from LastPass shared secure note: "TEST neo4j cluster provisioning setup"
+
+### Provision
 ````
 sudo su -
 
@@ -39,3 +43,7 @@ docker run \
     
    
     ssh -A neo4j-test-tunnel-up.ft.com
+    
+### Decom
+
+Instructions are the same as for [coco-pub-cluster](https://github.com/Financial-Times/coco-pub-provisioner)
