@@ -18,8 +18,8 @@ ExecStartPre=/bin/bash -c 'docker history coco/ft-neo4j:$DOCKER_APP_VERSION > /d
 # Also see https://neo4j.com/developer/docker-2-x/ for configuration options.
 ExecStart=/bin/sh -c "\
     export ENV=$(/usr/bin/etcdctl get /ft/config/environment_tag); \
-    export NEO4J_causalClustering_initialDiscoveryMembers=$(fleetctl list-machines -fields ip -no-legend | xargs -I{} echo {}:5000 | tr '\n' ',' | rev | cut -c 2- | rev); \
-    export "AdvertisedAddress=$(hostname -i);"
+   # export NEO4J_causalClustering_initialDiscoveryMembers=$(fleetctl list-machines -fields ip -no-legend | xargs -I{} echo {}:5000 | tr '\n' ',' | rev | cut -c 2- | rev); \
+   # export "AdvertisedAddress=$(hostname -i);"
     /usr/bin/docker run --rm --name %p-%i_$(uuidgen) \
     --memory "10g" \
     -v /vol/%p-%i/:/data -p 7474:7474 \
@@ -30,10 +30,10 @@ ExecStart=/bin/sh -c "\
     --env "GRAPHITE_ADDRESS=graphite.ft.com:2003" \
     --env "GRAPHITE_PREFIX=coco.services.$ENV.neo4j.%i" \
     --env "NEO4J_causalClustering_expectedCoreClusterSize=3"
-    --env "NEO4J_causalClustering_initialDiscoveryMembers=$NEO4J_causalClustering_initialDiscoveryMembers"
-    --env NEO4J_causalClustering_discoveryAdvertisedAddress="$AdvertisedAddress:5000"
-    --env NEO4J_causalClustering_transactionAdvertisedAddress="$AdvertisedAddress:6000"
-    --env NEO4J_causalClustering_raftAdvertisedAddress="$AdvertisedAddress:7000"
+  #  --env "NEO4J_causalClustering_initialDiscoveryMembers=$NEO4J_causalClustering_initialDiscoveryMembers"
+  #  --env NEO4J_causalClustering_discoveryAdvertisedAddress="$AdvertisedAddress:5000"
+  #  --env NEO4J_causalClustering_transactionAdvertisedAddress="$AdvertisedAddress:6000"
+  #  --env NEO4J_causalClustering_raftAdvertisedAddress="$AdvertisedAddress:7000"
     coco/ft-neo4j:$DOCKER_APP_VERSION"
 
 ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=^/%p-%i_)"'
