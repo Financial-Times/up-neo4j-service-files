@@ -31,10 +31,10 @@ ExecStart=/bin/sh -c '\
     --env "GRAPHITE_PREFIX=coco.services.$ENV.neo4j.%i" \
     --env "NEO4J_causalClustering_expectedCoreClusterSize=3" \
     --env "NEO4J_causalClustering_initialDiscoveryMembers=$NEO4J_causalClustering_initialDiscoveryMembers" \
-    --env "AdvertisedAddress=$(hostname -i)" \
-    --env "NEO4J_causalClustering_discoveryAdvertisedAddress=${AdvertisedAddress}:5000" \
-    --env "NEO4J_causalClustering_transactionAdvertisedAddress=${AdvertisedAddress}:6000" \
-    --env "NEO4J_causalClustering_raftAdvertisedAddress=${AdvertisedAddress}:7000" \
+    --env "AdvertisedAddressTest=$(hostname -i)" \
+    --env "NEO4J_causalClustering_discoveryAdvertisedAddress=$AdvertisedAddress:5000" \
+    --env "NEO4J_causalClustering_transactionAdvertisedAddress=$AdvertisedAddress:6000" \
+    --env "NEO4J_causalClustering_raftAdvertisedAddress=$AdvertisedAddress:7000" \
     coco/ft-neo4j:$DOCKER_APP_VERSION;'
 
 ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=^/%p-%i_)"'
