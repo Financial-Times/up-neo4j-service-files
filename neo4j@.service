@@ -24,7 +24,7 @@ ExecStart=/bin/sh -c "\
     --env "NEO4J_CACHE_MEMORY=1024m" \
     --env "GRAPHITE_ENABLED=true" \
     --env "GRAPHITE_ADDRESS=graphite.ft.com:2003" \
-    --env "GRAPHITE_PREFIX=coco.services.$ENV.neo4j-blue.%i" \
+    --env "GRAPHITE_PREFIX=coco.services.$ENV.neo4j.%i" \
     coco/ft-neo4j:$DOCKER_APP_VERSION"
 
 ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=^/%p-%i_)"'

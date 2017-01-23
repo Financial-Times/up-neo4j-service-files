@@ -1,6 +1,6 @@
 [Unit]
 Description=Neo4j hot backup
-After=neo4j@1.service
+After=neo4j@%i.service
 Requires=neo4j@%i.service
 
 [Service]
@@ -18,7 +18,7 @@ ExecStart=/bin/bash -c '\
 	--env AWS_SECRET_ACCESS_KEY=$(/usr/bin/etcdctl get /ft/_credentials/aws/aws_secret_access_key) \
 	--env AWS_BUCKET_NAME=com.ft.coco-neo4j-backup \
 	--env S3_DIR=$(/usr/bin/etcdctl get /ft/config/environment_tag) \
-	-v /vol/neo4j-blue-1/backup:/backup \
+	-v /vol/neo4j-%i/backup:/backup \
 	coco/neo4j-hot-backup:$DOCKER_APP_VERSION'
 
 
