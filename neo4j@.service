@@ -39,9 +39,9 @@ ExecStart=/bin/sh -c '\
     --env "NEO4J_causalClustering_expectedCoreClusterSize=3" \
     --env "NEO4J_causalClustering_initialDiscoveryMembers=$NEO4J_causalClustering_initialDiscoveryMembers" \
     --env "AdvertisedAddressTest=$(hostname -i)" \
-    --env "NEO4J_causalClustering_discoveryAdvertisedAddress=${ADVERTISED_ADDRESS}:5000" \
-    --env "NEO4J_causalClustering_transactionAdvertisedAddress=${ADVERTISED_ADDRESS}:6000" \
-    --env "NEO4J_causalClustering_raftAdvertisedAddress=${ADVERTISED_ADDRESS}:7000" \
+    --env "NEO4J_causalClustering_discoveryAdvertisedAddress=$ADVERTISED_ADDRESS:5000" \
+    --env "NEO4J_causalClustering_transactionAdvertisedAddress=$ADVERTISED_ADDRESS:6000" \
+    --env "NEO4J_causalClustering_raftAdvertisedAddress=$ADVERTISED_ADDRESS:7000" \
     coco/ft-neo4j:$DOCKER_APP_VERSION;'
 
 ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=^/%p-%i_)"'
