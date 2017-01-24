@@ -21,7 +21,6 @@ ExecStart=/bin/sh -c '\
     export NEO4J_causalClustering_initialDiscoveryMembers=$(fleetctl list-machines -fields ip -no-legend | xargs -I{} echo {}:5000 | tr \'\n\' \',\' | rev | cut -c 2- | rev); \
     export ADVERTISED_ADDRESS=$(hostname -i | tr -d '[:space:]'); \
     /usr/bin/docker run --rm --name %p-%i_$(uuidgen) \
-    --memory "10g" \
     -v /vol/neo4j/:/data \
     -p 7474:7474 \
     -p 7687:7687 \
@@ -30,15 +29,14 @@ ExecStart=/bin/sh -c '\
     -p 6000:6000 \
     -p 7000:7000 \
     --env "NEO4J_AUTH=none" \
-    --env "NEO4J_HEAP_MEMORY=3584" \
-    --env "NEO4J_CACHE_MEMORY=1024m" \
     --env "GRAPHITE_ENABLED=true" \
     --env "GRAPHITE_ADDRESS=graphite.ft.com:2003" \
     --env "GRAPHITE_PREFIX=coco.services.$ENV.neo4j.%i" \
+    --env "NEO4J_dbms_memory_heap_maxSize=10G" \
+    --env "NEO4J_dbms_memory_pagecache_size=18G" \
     --env "NEO4J_dbms_mode=CORE" \
     --env "NEO4J_causalClustering_expectedCoreClusterSize=3" \
     --env "NEO4J_causalClustering_initialDiscoveryMembers=$NEO4J_causalClustering_initialDiscoveryMembers" \
-    --env "AdvertisedAddressTest=$(hostname -i)" \
     --env "NEO4J_causalClustering_discoveryAdvertisedAddress=$ADVERTISED_ADDRESS:5000" \
     --env "NEO4J_causalClustering_transactionAdvertisedAddress=$ADVERTISED_ADDRESS:6000" \
     --env "NEO4J_causalClustering_raftAdvertisedAddress=$ADVERTISED_ADDRESS:7000" \
