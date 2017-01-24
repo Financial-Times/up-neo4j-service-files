@@ -18,8 +18,8 @@ ExecStartPre=/bin/bash -c 'docker history coco/ft-neo4j:$DOCKER_APP_VERSION > /d
 # Also see https://neo4j.com/developer/docker-2-x/ for configuration options.
 ExecStart=/bin/sh -c '\
     export ENV=$(/usr/bin/etcdctl get /ft/config/environment_tag); \
-    export NEO4J_causalClustering_initialDiscoveryMembers=$(fleetctl list-machines -fields ip -no-legend | xargs -I{} echo {}:5000 | tr \'\n\' \',\' | rev | cut -c 2- | rev); \
-    export ADVERTISED_ADDRESS=$(hostname -i | tr -d '[:space:]'); \
+    export NEO4J_causalClustering_initialDiscoveryMembers=$(fleetctl list-machines -fields ip -no-legend | tr '.' '-' | xargs -I{} echo ip-{}.eu-west-1.compute.internal:5000| tr \'\n\' \',\' | rev | cut -c 2- | rev); \
+    export ADVERTISED_ADDRESS=$(hostname | tr -d '[:space:]'); \
     /usr/bin/docker run --rm --name %p-%i_$(uuidgen) \
     -v /vol/neo4j/:/data \
     -p 7474:7474 \
