@@ -22,7 +22,7 @@ ExecStart=/bin/sh -c '\
     export AdvertisedAddress=$(hostname -i); \
     /usr/bin/docker run --rm --name %p-%i_$(uuidgen) \
     --memory "10g" \
-    -v /vol/%p-%i/:/data
+    -v /vol/%p-%i/:/data \
      -p 7474:7474 \
      -p 7687:7687 \
      -p 7473:7473 \
