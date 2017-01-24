@@ -21,7 +21,7 @@ ExecStart=/bin/sh -c '\
     export NEO4J_causalClustering_initialDiscoveryMembers=$(fleetctl list-machines -fields ip -no-legend | tr '.' '-' | xargs -I{} echo ip-{}.eu-west-1.compute.internal:5000| tr \'\n\' \',\' | rev | cut -c 2- | rev); \
     export ADVERTISED_ADDRESS=$(hostname | tr -d '[:space:]'); \
     /usr/bin/docker run --rm --name %p-%i_$(uuidgen) \
-    -v /vol/neo4j/:/data \
+    -v /vol/neo4j/data:/data \
     -p 7474:7474 \
     -p 7687:7687 \
     -p 7473:7473 \
