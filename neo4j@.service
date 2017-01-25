@@ -12,7 +12,7 @@ TimeoutStartSec=0
 KillMode=none
 ExecStartPre=-/bin/bash -c '/usr/bin/docker kill "$(docker ps -q --filter=name=^/%p-%i_)" > /dev/null 2>&1'
 ExecStartPre=-/bin/bash -c '/usr/bin/docker rm "$(docker ps -q --filter=name=^/%p-%i_)" > /dev/null 2>&1'
-ExecStartPre=/bin/bash -c 'docker history coco/ft-neo4j:$DOCKER_APP_VERSION > /dev/null 2>&1 || docker pull coco/ft-neo4j:$DOCKER_APP_VERSION'
+ExecStartPre=/bin/bash -c 'docker history neo4j:$DOCKER_APP_VERSION > /dev/null 2>&1 || docker pull neo4j:$DOCKER_APP_VERSION'
 ExecStartPre=/bin/bash -c 'wget -O /vol/neo4j/data/extra-conf.sh $(/usr/bin/etcdctl get /ft/config/neo4j/extra-conf-url) > /dev/null 2>&1'
 
 
