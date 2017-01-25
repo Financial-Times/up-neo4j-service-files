@@ -13,9 +13,10 @@ KillMode=none
 ExecStartPre=-/bin/bash -c '/usr/bin/docker kill "$(docker ps -q --filter=name=^/%p-%i_)" > /dev/null 2>&1'
 ExecStartPre=-/bin/bash -c '/usr/bin/docker rm "$(docker ps -q --filter=name=^/%p-%i_)" > /dev/null 2>&1'
 ExecStartPre=/bin/bash -c 'docker history coco/ft-neo4j:$DOCKER_APP_VERSION > /dev/null 2>&1 || docker pull coco/ft-neo4j:$DOCKER_APP_VERSION'
+ExecStartPre=/bin/bash -c 'wget -O /vol/neo4j/data/extra-conf.sh $(/usr/bin/etcdctl get /ft/config/neo4j/extra-conf-url) > /dev/null 2>&1'
 
 
-# Also see https://neo4j.com/developer/docker-2-x/ for configuration options.
+# Also see http://neo4j.com/docs/operations-manual/3.1/installation/docker/ for configuration options.
 ExecStart=/bin/sh -c '\
     export ENV=$(/usr/bin/etcdctl get /ft/config/environment_tag); \
     export NEO4J_causalClustering_initialDiscoveryMembers=$(fleetctl list-machines -fields ip -no-legend | tr '.' '-' | xargs -I{} echo ip-{}.eu-west-1.compute.internal:5000| tr \'\n\' \',\' | rev | cut -c 2- | rev); \
@@ -40,8 +41,9 @@ ExecStart=/bin/sh -c '\
     --env "NEO4J_causalClustering_discoveryAdvertisedAddress=$ADVERTISED_ADDRESS:5000" \
     --env "NEO4J_causalClustering_transactionAdvertisedAddress=$ADVERTISED_ADDRESS:6000" \
     --env "NEO4J_causalClustering_raftAdvertisedAddress=$ADVERTISED_ADDRESS:7000" \
+    --env "EXTENSION_SCRIPT=/data/extra_conf.sh" \
     --network="host" \
-    coco/ft-neo4j:$DOCKER_APP_VERSION;'
+    neo4j:$DOCKER_APP_VERSION;'
 
 ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=^/%p-%i_)"'
 Restart=on-failure
