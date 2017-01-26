@@ -11,7 +11,7 @@ KillMode=none
 ExecStart=/bin/bash -c '\
   ENV=$(/usr/bin/etcdctl get /ft/config/environment_tag); \
   KONSTRUCTOR_API_KEY=$(/usr/bin/etcdctl get /ft/_credentials/konstructor/api-key); \
-  PRIVATE_IP=$(curl -s 169.254.169.254/latest/meta-data/private-ipv4); \
+  PRIVATE_IP=$(curl -s 169.254.169.254/latest/meta-data/local-ipv4); \
   docker run --rm --name %p_$(uuidgen) \
   -e="DOMAINS=$ENV-neo4j-tunnel-up" \
   -e="KONSTRUCTOR_API_KEY=$KONSTRUCTOR_API_KEY" \
