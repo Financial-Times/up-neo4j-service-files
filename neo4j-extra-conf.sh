@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# Neo4j logging
-    setting "dbms.directories.logs" "/data/logs"
 # Neo4j http logging
     setting "dbms.logs.http.enabled" "true"
     setting "dbms.logs.http.rotation.keep_number" "1"
