@@ -18,12 +18,12 @@ setting() {
     setting "dbms.directories.logs" "/data/logs"
 # Neo4j http logging
     setting "dbms.logs.http.enabled" "true"
-    setting "dbms.logs.http.rotation.keep_number" "0"
+    setting "dbms.logs.http.rotation.keep_number" "1"
     setting "dbms.logs.http.rotation.size" "1m"
 #Neo4j querry logging
     setting "dbms.logs.query.enabled" "true"
     setting "dbms.logs.query.parameter_logging_enabled" "true"
-    setting "dbms.logs.query.rotation.keep_number" "0"
+    setting "dbms.logs.query.rotation.keep_number" "1"
     setting "dbms.logs.query.rotation.size" "1m"
     setting "dbms.logs.query.threshold" "100ms"
 
