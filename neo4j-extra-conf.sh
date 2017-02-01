@@ -10,8 +10,6 @@
     setting "dbms.logs.query.rotation.keep_number" "1"
     setting "dbms.logs.query.rotation.size" "1m"
     setting "dbms.logs.query.threshold" "100ms"
-#Neo4j reduces logging output for raft checks
-    setting "dbms.logs.debug.level" "ERROR"
 
 # Graphite integration start
 if [ "${GRAPHITE_ENABLED:-false}" = true ]; then
