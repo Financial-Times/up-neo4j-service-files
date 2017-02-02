@@ -1,0 +1,16 @@
+[Unit]
+Description=pre-splunk-forwarder sets up piping of logging stream to journld
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=1200
+ExecStart=/bin/sh -c '\
+mkdir -p /vol/neo4j/logs; touch /vol/neo4j/logs/http.log; touch /vol/neo4j/logs/query.log; \
+tail -f /vol/neo4j/logs/http.log /vol/neo4j/logs/query.log | egrep -v "^==>|^$|ELB-HealthChecker" | systemd-cat; '
+
+Restart=on-failure
+RestartSec=60
+
+[X-Fleet]
+Global=true
