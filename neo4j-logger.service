@@ -1,5 +1,5 @@
 [Unit]
-Description=pre-splunk-forwarder sets up piping of logging stream to journld
+Description=neo4j-logger exposes neo4j logging dirs and sets up piping of logging stream to journald
 After=docker.service
 Requires=docker.service
 
