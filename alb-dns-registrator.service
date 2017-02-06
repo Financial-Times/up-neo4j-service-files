@@ -1,5 +1,5 @@
 [Unit]
-Description=Registers ALB DNS with DynDNS
+Description=ALB DNS name registrator
 After=docker.service
 Requires=docker.service
 
@@ -16,9 +16,8 @@ ExecStartPre=-/bin/bash -c '/usr/bin/docker rm "$(docker ps -q --filter=name=^/%
 ExecStartPre=/bin/bash -c 'docker history $IMAGENAME:$DOCKER_APP_VERSION > /dev/null 2>&1 || docker pull $IMAGENAME:$DOCKER_APP_VERSION'
 
 ExecStart=/bin/sh -c '\
-  export CLI_ARGS="--debug=true --dynkey=$(/usr/bin/etcdctl get /ft/_credentials/konstructor/api-key) --interval=60"; \
   /usr/bin/docker run --rm --name %p_$(uuidgen) \
-  --env "CLI_ARGS=${CLI_ARGS}" \
+  --env "CLI_ARGS=--debug=true --dynkey=$(/usr/bin/etcdctl get /ft/_credentials/konstructor/api-key) --interval=60" \
   $IMAGENAME:$DOCKER_APP_VERSION'
 
 ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=^/%p_)"'
