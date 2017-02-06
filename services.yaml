@@ -18,3 +18,5 @@ services:
   version: 3.1.0-enterprise
   count: 3
   sequentialDeployment: true
+- name: alb-dns-registrator.service
+  count: 1

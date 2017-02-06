@@ -1,0 +1,26 @@
+[Unit]
+Description=Registers ALB DNS with DynDNS
+After=docker.service
+Requires=docker.service
+
+[Service]
+Environment="DOCKER_APP_VERSION=latest"
+Environment="IMAGENAME=heinonenjussi/alb-dns-registrator"
+
+TimeoutStartSec=0
+# Change killmode from "control-group" to "none" to let Docker remove
+# work correctly.
+KillMode=none
+ExecStartPre=-/bin/bash -c '/usr/bin/docker kill "$(docker ps -q --filter=name=^/%p-%i_)" > /dev/null 2>&1'
+ExecStartPre=-/bin/bash -c '/usr/bin/docker rm "$(docker ps -q --filter=name=^/%p-%i_)" > /dev/null 2>&1'
+ExecStartPre=/bin/bash -c 'docker history $IMAGENAME:$DOCKER_APP_VERSION > /dev/null 2>&1 || docker pull $IMAGENAME:$DOCKER_APP_VERSION'
+
+ExecStart=/bin/sh -c '\
+  export CLI_ARGS="--debug=true --dynkey=$(/usr/bin/etcdctl get /ft/_credentials/konstructor/api-key) --interval=60"; \
+  /usr/bin/docker run --rm --name %p-%i_$(uuidgen) \
+  --env "CLI_ARGS=${CLI_ARGS}" \
+  $IMAGENAME:$DOCKER_APP_VERSION`;'
+
+ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=^/%p-%i_)"'
+Restart=on-failure
+RestartSec=60
