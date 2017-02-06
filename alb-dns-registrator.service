@@ -21,6 +21,6 @@ ExecStart=/bin/sh -c '\
   --env "CLI_ARGS=${CLI_ARGS}" \
   $IMAGENAME:$DOCKER_APP_VERSION'
 
-ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=^/%p-%i_)"'
+ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=^/%p_)"'
 Restart=on-failure
 RestartSec=60
