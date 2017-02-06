@@ -24,3 +24,6 @@ ExecStart=/bin/sh -c '\
 ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=^/%p_)"'
 Restart=on-failure
 RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
