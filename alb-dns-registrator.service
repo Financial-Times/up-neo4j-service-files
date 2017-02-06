@@ -17,7 +17,7 @@ ExecStartPre=/bin/bash -c 'docker history $IMAGENAME:$DOCKER_APP_VERSION > /dev/
 
 ExecStart=/bin/sh -c '\
   /usr/bin/docker run --rm --name %p_$(uuidgen) \
-  --env "CLI_ARGS=--debug=true --dynkey=$(/usr/bin/etcdctl get /ft/_credentials/konstructor/api-key) --interval=60" \
+  --env "CLI_ARGS=\"--debug=true --dynkey=$(/usr/bin/etcdctl get /ft/_credentials/konstructor/api-key) --interval=60\"" \
   $IMAGENAME:$DOCKER_APP_VERSION'
 
 ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=^/%p_)"'
