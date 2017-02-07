@@ -5,7 +5,7 @@ Requires=docker.service
 
 [Service]
 Environment="DOCKER_APP_VERSION=latest"
-Environment="IMAGENAME=heinonenjussi/alb-dns-registrator"
+Environment="IMAGENAME=coco/alb-dns-registrator"
 
 TimeoutStartSec=0
 # Change killmode from "control-group" to "none" to let Docker remove
