@@ -1,6 +1,6 @@
 [Unit]
 Description=Neo4j hot backup
-After=neo4j@*.service
+After=neo4j@%i.service
 
 [Service]
 Environment="DOCKER_APP_VERSION=latest"
