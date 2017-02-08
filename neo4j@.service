@@ -46,7 +46,7 @@ ExecStart=/bin/sh -c '\
     --network="host" \
     neo4j:$DOCKER_APP_VERSION;'
 
-ExecStop=-/bin/bash -c 'docker stop -t 60 "$(docker ps -q --filter=name=^/%p-%i_)"'
+ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=^/%p-%i_)"'
 Restart=on-failure
 RestartSec=60
 
