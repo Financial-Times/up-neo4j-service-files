@@ -6,5 +6,9 @@ After=neo4j@%i.service
 [Service]
 RemainAfterExit=yes
 
+ExecStart=/bin/sh -c 'echo Starting neo4j-sidekick@%i.service'
+ExecStop=/bin/sh -c 'echo Stopping neo4j-sidekick@%i.service'
+
+
 [X-Fleet]
 MachineOf=neo4j@%i.service
