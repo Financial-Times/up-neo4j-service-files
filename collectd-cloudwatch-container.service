@@ -27,3 +27,6 @@ RestartSec=60
 
 [Install]
 WantedBy=multi-user.target
+
+[X-Fleet]
+Global=true
