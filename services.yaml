@@ -20,5 +20,5 @@ services:
   sequentialDeployment: true
 - name: alb-dns-registrator.service
   version: v1.0.0
--name: collectd-cloudwatch-container.service
+- name: collectd-cloudwatch-container.service
   version: v1.0.3
