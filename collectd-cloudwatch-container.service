@@ -19,6 +19,7 @@ ExecStart=/bin/sh -c '\
   /usr/bin/docker run --rm --name %p_$(uuidgen) \
   --env "NAMESPACE=com.ft.up.$(/usr/bin/etcdctl get /ft/config/environment_tag).neo4j" \
   -v /proc:/host/proc \
+  -v /vol/neo4j:/vol/neo4j \
   $IMAGENAME:$DOCKER_APP_VERSION'
 
 ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=^/%p_)"'
