@@ -1,5 +1,5 @@
 [Unit]
-Description=ALB DNS name registrator
+Description=Collectd Cloudwatch service
 After=docker.service
 Requires=docker.service
 
