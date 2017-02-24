@@ -8,7 +8,8 @@ services:
   desiredState: loaded
 - name: neo4j-hot-backup@.timer
   count: 1
-- name: neo4j-logger.service
+- name: neo4j-logger@.service
+- count: 3
 - name: splunk-forwarder.service
 - name: tunnel-registrator.service
   version: v1.0.3
