@@ -21,4 +21,4 @@ services:
 - name: alb-dns-registrator.service
   version: v1.0.0
 - name: collectd-cloudwatch-container.service
-  version: v1.0.3
+  version: v1.0.6
