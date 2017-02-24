@@ -8,7 +8,7 @@ After=neo4j@%i.service
 [Service]
 TimeoutStartSec=1200
 ExecStart=/bin/sh -c '\
-mkdir -p /vol/neo4j/logs; touch /vol/neo4j/logs/http.log; touch /vol/neo4j/logs/query.log; \
+mkdir -p /vol/neo4j/logs && touch /vol/neo4j/logs/http.log && touch /vol/neo4j/logs/query.log; \
 tail -f /vol/neo4j/logs/http.log /vol/neo4j/logs/query.log /vol/neo4j/data/databases/graph.db/messages.log.* | egrep -v "^==>|^$|ELB-HealthChecker" | systemd-cat; '
 
 Restart=on-failure
