@@ -1,0 +1,33 @@
+[Unit]
+Description=Collectd Cloudwatch service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Environment="DOCKER_APP_VERSION=latest"
+Environment="IMAGENAME=coco/collectd-cloudwatch-container"
+
+TimeoutStartSec=0
+# Change killmode from "control-group" to "none" to let Docker remove
+# work correctly.
+KillMode=none
+ExecStartPre=-/bin/bash -c '/usr/bin/docker kill "$(docker ps -q --filter=name=^/%p_)" > /dev/null 2>&1'
+ExecStartPre=-/bin/bash -c '/usr/bin/docker rm "$(docker ps -q --filter=name=^/%p_)" > /dev/null 2>&1'
+ExecStartPre=/bin/bash -c 'docker history $IMAGENAME:$DOCKER_APP_VERSION > /dev/null 2>&1 || docker pull $IMAGENAME:$DOCKER_APP_VERSION'
+
+ExecStart=/bin/sh -c '\
+  /usr/bin/docker run --rm --name %p_$(uuidgen) \
+  --env "NAMESPACE=com.ft.up.$(/usr/bin/etcdctl get /ft/config/environment_tag).neo4j" \
+  -v /proc:/host/proc \
+  -v /vol/neo4j:/vol/neo4j \
+  $IMAGENAME:$DOCKER_APP_VERSION'
+
+ExecStop=-/bin/bash -c 'docker stop -t 3 "$(docker ps -q --filter=name=^/%p_)"'
+Restart=on-failure
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+Global=true
