@@ -2,6 +2,8 @@
 Description=neo4j-logger exposes neo4j logging dirs and sets up piping of logging stream to journald
 After=docker.service
 Requires=docker.service
+BindsTo=neo4j@%i.service
+After=neo4j@%i.service
 
 [Service]
 TimeoutStartSec=1200
@@ -13,4 +15,4 @@ Restart=on-failure
 RestartSec=60
 
 [X-Fleet]
-Global=true
+MachineOf=neo4j@%i.service
