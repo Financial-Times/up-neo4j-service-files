@@ -2,7 +2,7 @@
 Description=Neo4j
 After=docker.service
 Requires=docker.service
-Wants=fleet-neo4j-logger@%i.service
+Wants=neo4j-logger@%i.service
 
 [Service]
 Environment="DOCKER_APP_VERSION=latest"
