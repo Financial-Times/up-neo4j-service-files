@@ -43,7 +43,6 @@ ExecStart=/bin/sh -c '\
     --env "NEO4J_causalClustering_discoveryAdvertisedAddress=$ADVERTISED_ADDRESS:5000" \
     --env "NEO4J_causalClustering_transactionAdvertisedAddress=$ADVERTISED_ADDRESS:6000" \
     --env "NEO4J_causalClustering_raftAdvertisedAddress=$ADVERTISED_ADDRESS:7000" \
-    --env "NEO4J_dbms_txLog_rotation_retentionPolicy=250M" \
     --env "EXTENSION_SCRIPT=/data/extra-conf.sh" \
     --network="host" \
     neo4j:$DOCKER_APP_VERSION;'
