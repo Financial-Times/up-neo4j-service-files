@@ -16,7 +16,7 @@ services:
 - name: neo4j-sidekick@.service
   count: 3
 - name: neo4j@.service
-  version: 3.1.3-enterprise
+  version: 3.1.0-enterprise
   count: 3
   sequentialDeployment: true
 - name: alb-dns-registrator.service
