@@ -4,6 +4,7 @@ After=neo4j@%i.service
 
 [Service]
 Environment="DOCKER_APP_VERSION=latest"
+Environment="NEO4J_DATA=/vol/neo4j/data"
 TimeoutStartSec=0
 KillMode=none
 
@@ -17,8 +18,10 @@ ExecStart=/bin/bash -c '\
 	--env AWS_SECRET_ACCESS_KEY=$(/usr/bin/etcdctl get /ft/_credentials/aws/aws_secret_access_key) \
 	--env AWS_BUCKET_NAME=com.ft.coco-neo4j-backup \
 	--env S3_DIR=$(/usr/bin/etcdctl get /ft/config/environment_tag) \
-	-v /vol/neo4j/data/backup:/backup \
+	-v $NEO4J_DATA/backup:/backup \
 	coco/neo4j-hot-backup:$DOCKER_APP_VERSION'
+
+ExecStartPost=/bin/bash -c 'comm -23 <(ls $NEO4J_DATA/backup | sort) <(ls $NEO4J_DATA/databases/graph.db | sort) | grep neostore.transaction.db | xargs -I{} rm $NEO4J_DATA/backup/{}'
 
 [X-Fleet]
 Conflicts=neo4j-hot-backup@*.service
