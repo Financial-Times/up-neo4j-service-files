@@ -2,7 +2,7 @@
 Description=Runs the Neo4j hot backup job
 
 [Timer]
-OnUnitActiveSec=1h
+OnUnitActiveSec=12h
 
 [Install]
 WantedBy=timers.target
