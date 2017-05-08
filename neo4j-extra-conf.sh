@@ -21,5 +21,5 @@ if [ "${GRAPHITE_ENABLED:-false}" = true ]; then
 fi
 # Graphite integration end
 
-# Set transaction logs to keep 1 days worth.
-setting "dbms.tx_log.rotation.retention_policy" "1 days"
+# Set transaction logs to keep 2 days worth.
+setting "dbms.tx_log.rotation.retention_policy" "2 days"
