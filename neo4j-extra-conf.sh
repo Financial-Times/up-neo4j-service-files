@@ -9,7 +9,7 @@
     setting "dbms.logs.query.parameter_logging_enabled" "true"
     setting "dbms.logs.query.rotation.keep_number" "1"
     setting "dbms.logs.query.rotation.size" "1m"
-    setting "dbms.logs.query.threshold" "0ms"
+    #setting "dbms.logs.query.threshold" "100ms"
 
 # Graphite integration start
 if [ "${GRAPHITE_ENABLED:-false}" = true ]; then
