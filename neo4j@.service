@@ -23,7 +23,7 @@ ExecStart=/bin/sh -c '\
     export NEO4J_causalClustering_initialDiscoveryMembers=$(fleetctl list-machines -fields ip -no-legend | xargs -I{} echo {}:5000 | tr \'\n\' \',\' | rev | cut -c 2- | rev); \
     export ADVERTISED_ADDRESS=$(hostname | tr -d '[:space:]'); \
     export NEO4J_dbms_memory_heap_maxSize=$(/usr/bin/etcdctl get /ft/config/neo4j/dbms-memory-heap-maxSize); \
-    export NEO4J_dbms_memory_pagecache_sizee=$(/usr/bin/etcdctl get /ft/config/neo4j/dbms-memory-pagecache-size); \
+    export NEO4J_dbms_memory_pagecache_size=$(/usr/bin/etcdctl get /ft/config/neo4j/dbms-memory-pagecache-size); \
     /usr/bin/docker run --rm --name %p-%i_$(uuidgen) \
     -v /vol/neo4j/data:/data \
     -v /vol/neo4j/logs:/logs \
