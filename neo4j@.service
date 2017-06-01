@@ -23,6 +23,7 @@ ExecStart=/bin/sh -c '\
     export NEO4J_causalClustering_initialDiscoveryMembers=$(fleetctl list-machines -fields ip -no-legend | xargs -I{} echo {}:5000 | tr \'\n\' \',\' | rev | cut -c 2- | rev); \
     export ADVERTISED_ADDRESS=$(hostname | tr -d '[:space:]'); \
     export NEO4J_dbms_memory_heap_maxSize=$(/usr/bin/etcdctl get /ft/config/neo4j/dbms-memory-heap-maxSize); \
+    export NEO4J_dbms_memory_pagecache_size=$(/usr/bin/etcdctl get /ft/config/neo4j/dbms-memory-pagecache-size); \
     /usr/bin/docker run --rm --name %p-%i_$(uuidgen) \
     -v /vol/neo4j/data:/data \
     -v /vol/neo4j/logs:/logs \
@@ -36,7 +37,6 @@ ExecStart=/bin/sh -c '\
     --env "GRAPHITE_ENABLED=true" \
     --env "GRAPHITE_ADDRESS=graphite.ft.com:2003" \
     --env "GRAPHITE_PREFIX=coco.services.$ENV.neo4j.%i" \
-    --env "NEO4J_dbms_memory_pagecache_size=18G" \
     --env "NEO4J_dbms_mode=CORE" \
     --env "NEO4J_causalClustering_expectedCoreClusterSize=3" \
     --env "NEO4J_causalClustering_initialDiscoveryMembers=$NEO4J_causalClustering_initialDiscoveryMembers" \
@@ -44,6 +44,7 @@ ExecStart=/bin/sh -c '\
     --env "NEO4J_causalClustering_transactionAdvertisedAddress=$ADVERTISED_ADDRESS:6000" \
     --env "NEO4J_causalClustering_raftAdvertisedAddress=$ADVERTISED_ADDRESS:7000" \
     --env "NEO4J_dbms_memory_heap_maxSize=$NEO4J_dbms_memory_heap_maxSize" \
+    --env "NEO4J_dbms_memory_pagecache_size=$NEO4J_dbms_memory_pagecache_size" \
     --env "EXTENSION_SCRIPT=/data/extra-conf.sh" \
     --network="host" \
     neo4j:$DOCKER_APP_VERSION;'
