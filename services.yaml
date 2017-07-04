@@ -3,7 +3,7 @@ services:
 - name: image-cleaner.service
   version: 1.0.0
 - name: neo4j-hot-backup@.service
-  version: 1.1-go
+  version: 1.1.1
   count: 1
   desiredState: loaded
 - name: neo4j-hot-backup@.timer
