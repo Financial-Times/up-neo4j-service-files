@@ -23,5 +23,5 @@ fi
 
 # Set transaction logs to keep 2 days worth.
 setting "dbms.tx_log.rotation.retention_policy" "2 days"
-setting "dbms.threads.worker_count" "64"
+setting "dbms.threads.worker_count" "72"
 
