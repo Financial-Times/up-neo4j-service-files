@@ -14,37 +14,34 @@ KillMode=none
 ExecStartPre=-/bin/bash -c '/usr/bin/docker kill "$(docker ps -q --filter=name=^/%p-%i_)" > /dev/null 2>&1'
 ExecStartPre=-/bin/bash -c '/usr/bin/docker rm "$(docker ps -q --filter=name=^/%p-%i_)" > /dev/null 2>&1'
 ExecStartPre=/bin/bash -c 'docker history neo4j:$DOCKER_APP_VERSION > /dev/null 2>&1 || docker pull neo4j:$DOCKER_APP_VERSION'
-ExecStartPre=/bin/sh -c '\
+
+# We echo this into a file to allow us to bypass the 2048 character limit on a single command.
+ExecStartPre=echo '
     export ENV=$(/usr/bin/etcdctl get /ft/config/environment_tag); \
-    export NEO4J_causalClustering_initialDiscoveryMembers=$(fleetctl list-units -full | grep neo4j@ | cut -f5 | cut -d / -f2 | xargs -I{} echo {}:5000 | tr "\n" "," | rev | cut -c 2- | rev); \
-    export ADVERTISED_ADDRESS=$(curl http://169.254.169.254/latest/meta-data/local-ipv4); \
-    export NEO4J_dbms_memory_heap_maxSize=$(/usr/bin/etcdctl get /ft/config/neo4j/dbms-memory-heap-maxSize); \
-    export NEO4J_dbms_memory_pagecache_size=$(/usr/bin/etcdctl get /ft/config/neo4j/dbms-memory-pagecache-size); '
+    export INITIAL_MEMBERS=$(fleetctl list-units -full | grep neo4j@ | cut -f5 | cut -d / -f2 | xargs -I{} echo {}:5000 | tr "\n" "," | rev | cut -c 2- | rev); \
+    export ADDRESS=$(curl http://169.254.169.254/latest/meta-data/local-ipv4); \
+    export HEAP_SIZE=$(/usr/bin/etcdctl get /ft/config/neo4j/dbms-memory-heap-maxSize); \
+    export PAGECACHE_SIZE=$(/usr/bin/etcdctl get /ft/config/neo4j/dbms-memory-pagecache-size);' > /tmp/env
 
 # Also see http://neo4j.com/docs/operations-manual/3.2/installation/docker/ for configuration options.
 ExecStart=/bin/sh -c '\
+    source /tmp/env; \
     /usr/bin/docker run --rm --name %p-%i_$(uuidgen) \
-    -v /vol/neo4j/data:/data \
-    -v /vol/neo4j/logs:/logs \
-    -p 7474:7474 \
-    -p 7687:7687 \
-    -p 7473:7473 \
-    -p 5000:5000 \
-    -p 6000:6000 \
-    -p 7000:7000 \
-    --env "NEO4J_AUTH=none" \
+    -v /vol/neo4j/data:/data -v /vol/neo4j/logs:/logs \
+    -p 7474:7474 -p 7687:7687 -p 7473:7473 -p 5000:5000 -p 6000:6000 -p 7000:7000 \
+    --env "NEO4J_AUTH=none" \ 
     --env "NEO4J_dbms_mode=CORE" \
     --env "NEO4J_causal__clustering_expected__core__cluster__size=3" \
-    --env "NEO4J_causal__clustering_initial__discovery__members=$NEO4J_causalClustering_initialDiscoveryMembers" \
-    --env "NEO4J_causal__clustering_discovery__listen__address=$ADVERTISED_ADDRESS:5000" \
-    --env "NEO4J_causal__clustering_discovery__advertised__address=$ADVERTISED_ADDRESS:5000" \
-    --env "NEO4J_causal__clustering_transaction__listen__address=$ADVERTISED_ADDRESS:6000" \
-    --env "NEO4J_causal__clustering_transaction__advertised__address=$ADVERTISED_ADDRESS:6000" \
-    --env "NEO4J_causal__clustering_raft__listen__address=$ADVERTISED_ADDRESS:7000" \
-    --env "NEO4J_causal__clustering_raft__advertised__address=$ADVERTISED_ADDRESS:7000" \
-    --env "NEO4J_dbms_memory_heap_initial__size=$NEO4J_dbms_memory_heap_maxSize" \
-    --env "NEO4J_dbms_memory_heap_max__size=$NEO4J_dbms_memory_heap_maxSize" \
-    --env "NEO4J_dbms_memory_pagecache_size=$NEO4J_dbms_memory_pagecache_size" \
+    --env "NEO4J_causal__clustering_initial__discovery__members=$INITIAL_MEMBERS" \
+    --env "NEO4J_causal__clustering_discovery__listen__address=$ADDRESS:5000" \
+    --env "NEO4J_causal__clustering_discovery__advertised__address=$ADDRESS:5000" \
+    --env "NEO4J_causal__clustering_transaction__listen__address=$ADDRESS:6000" \
+    --env "NEO4J_causal__clustering_transaction__advertised__address=$ADDRESS:6000" \
+    --env "NEO4J_causal__clustering_raft__listen__address=$ADDRESS:7000" \
+    --env "NEO4J_causal__clustering_raft__advertised__address=$ADDRESS:7000" \
+    --env "NEO4J_dbms_memory_heap_initial__size=$HEAP_SIZE" \
+    --env "NEO4J_dbms_memory_heap_max__size=$HEAP_SIZE" \
+    --env "NEO4J_dbms_memory_pagecache_size=$PAGECACHE_SIZE" \
     --env "NEO4J_dbms_logs_query_enabled=true" \
     --env "NEO4J_dbms_logs_query_parameter__logging__enabled=true" \
     --env "NEO4J_dbms_logs_query_rotation_keep__number=1" \
@@ -53,10 +50,14 @@ ExecStart=/bin/sh -c '\
     --env "NEO4J_dbms_logs_http_enabled=true" \
     --env "NEO4J_dbms_logs_http_rotation_keep__number=1" \
     --env "NEO4J_dbms_logs_http_rotation_size=1m" \
+    --env "NEO4J_metrics_graphite_enabled=true" \
+    --env "NEO4J_metrics_graphite_server=graphite.ft.com:2003" \
+    --env "NEO4J_metrics_graphite_interval=3m" \
+    --env "NEO4J_metrics_prefix=coco.services.$ENV.neo4j.%i" \
     --env "NEO4J_dbms_tx__log_rotation_retention__policy=2 days" \
-    --network="host" \
-    neo4j:$DOCKER_APP_VERSION;'
+    --network="host" neo4j:$DOCKER_APP_VERSION;'
 
+ExecStartPost=
 ExecStop=-/bin/bash -c 'docker stop -t 60 "$(docker ps -q --filter=name=^/%p-%i_)"'
 Restart=on-failure
 RestartSec=60
