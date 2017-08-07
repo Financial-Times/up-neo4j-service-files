@@ -53,10 +53,6 @@ ExecStart=/bin/sh -c '\
     --env "NEO4J_dbms_logs_http_enabled=true" \
     --env "NEO4J_dbms_logs_http_rotation_keep__number=1" \
     --env "NEO4J_dbms_logs_http_rotation_size=1m" \
-    --env "NEO4J_metrics_graphite_enabled=true" \
-    --env "NEO4J_metrics_graphite_server=graphite.ft.com:2003" \
-    --env "NEO4J_metrics_graphite_interval=3m" \
-    --env "NEO4J_metrics_prefix=coco.services.$ENV.neo4j.%i" \
     --env "NEO4J_dbms_tx__log_rotation_retention__policy=2 days" \
     --network="host" \
     neo4j:$DOCKER_APP_VERSION;'
