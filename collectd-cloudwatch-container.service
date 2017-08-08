@@ -18,7 +18,6 @@ ExecStartPre=/bin/bash -c 'docker history $IMAGENAME:$DOCKER_APP_VERSION > /dev/
 ExecStart=/bin/sh -c '\
   /usr/bin/docker run --rm --name %p_$(uuidgen) \
   --env "NAMESPACE=com.ft.up.$(/usr/bin/etcdctl get /ft/config/environment_tag).neo4j" \
-  --env "INSTANCEID=$(curl -s --connect-timeout 3 http://169.254.169.254/latest/meta-data/instance-id)" \
   --env "TOPIC=$(etcdctl get /ft/config/sns_topic_arn)" \
   -v /proc:/host/proc \
   -v /vol/neo4j:/vol/neo4j \
