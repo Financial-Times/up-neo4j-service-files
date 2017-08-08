@@ -17,7 +17,7 @@ ExecStartPre=/bin/bash -c 'docker history neo4j:$DOCKER_APP_VERSION > /dev/null 
 
 # We echo this into a file to allow us to bypass the 2048 character limit on a single command.
 ExecStartPre=/bin/bash -c 'echo "export ENV=$(/usr/bin/etcdctl get /ft/config/environment_tag);" > /tmp/env'
-ExecStartPre=/bin/bash -c 'echo "export INITIAL_MEMBERS=$(fleetctl list-units -full | grep neo4j@ | cut -f5 | cut -d / -f2 | xargs -I{} echo {}:5000 | tr '\n' ',' | rev | cut -c 2- | rev);" >> /tmp/env'
+ExecStartPre=/bin/bash -c 'echo "export INITIAL_MEMBERS=$(fleetctl list-units -full | grep neo4j@ | cut -f5 | cut -d / -f2 | xargs -I{} echo {}:5000 | tr \'\n\' \',\' | rev | cut -c 2- | rev);" >> /tmp/env'
 ExecStartPre=/bin/bash -c 'echo "export ADDRESS=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4);" >> /tmp/env'
 ExecStartPre=/bin/bash -c 'echo "export HEAP_SIZE=$(/usr/bin/etcdctl get /ft/config/neo4j/dbms-memory-heap-maxSize);" >> /tmp/env'
 ExecStartPre=/bin/bash -c 'echo "export PAGECACHE_SIZE=$(/usr/bin/etcdctl get /ft/config/neo4j/dbms-memory-pagecache-size);"" >> /tmp/env'
