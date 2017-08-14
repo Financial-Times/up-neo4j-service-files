@@ -24,11 +24,9 @@ ExecStartPre=/bin/bash -c 'echo "export PAGECACHE_SIZE=$(/usr/bin/etcdctl get /f
 
 # Also see http://neo4j.com/docs/operations-manual/3.2/installation/docker/ for configuration options.
 ExecStart=/bin/sh -c '\
-    cat /tmp/env; \
     source /tmp/env; \
     /usr/bin/docker run --rm --name %p-%i_$(uuidgen) \
     -v /vol/neo4j/data:/data -v /vol/neo4j/logs:/logs \
-    -p 7474:7474 -p 7687:7687 -p 7473:7473 -p 5000:5000 -p 6000:6000 -p 7000:7000 \
     --env "NEO4J_AUTH=none" \ 
     --env "NEO4J_dbms_mode=CORE" \
     --env "NEO4J_causal__clustering_expected__core__cluster__size=3" \
@@ -39,6 +37,8 @@ ExecStart=/bin/sh -c '\
     --env "NEO4J_causal__clustering_transaction__advertised__address=$ADDRESS:6000" \
     --env "NEO4J_causal__clustering_raft__listen__address=0.0.0.0:7000" \
     --env "NEO4J_causal__clustering_raft__advertised__address=$ADDRESS:7000" \
+    --env "NEO4J_dbms_connectors_default__advertised__address=$ADDRESS" \
+    --env "NEO4J_dbms_connectors_default__listen__address=0.0.0.0" \
     --env "NEO4J_dbms_memory_heap_initial__size=$HEAP_SIZE" \
     --env "NEO4J_dbms_memory_heap_max__size=$HEAP_SIZE" \
     --env "NEO4J_dbms_memory_pagecache_size=$PAGECACHE_SIZE" \
