@@ -57,6 +57,8 @@ ExecStart=/bin/sh -c '\
     --env "NEO4J_dbms_tx__log_rotation_retention__policy=2 days" \
     --network="host" neo4j:$DOCKER_APP_VERSION;'
 
+ExecStartPost=/bin/bash -c 'etcdctl set /ft/services/neo4j/healthcheck false;'
+
 ExecStop=-/bin/bash -c 'docker stop -t 60 "$(docker ps -q --filter=name=^/%p-%i_)"'
 Restart=on-failure
 RestartSec=60
