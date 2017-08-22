@@ -14,10 +14,8 @@ services:
   desiredState: loaded
 - name: tunnel-registrator.service
   version: v1.0.3
-- name: neo4j-sidekick@.service
-  count: 3
 - name: neo4j@.service
-  version: 3.1.0-enterprise
+  version: 3.2.2-enterprise
   count: 3
   sequentialDeployment: true
 - name: alb-dns-registrator.service
