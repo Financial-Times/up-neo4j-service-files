@@ -15,6 +15,9 @@ ExecStartPre=-/bin/bash -c '/usr/bin/docker kill "$(docker ps -q --filter=name=^
 ExecStartPre=-/bin/bash -c '/usr/bin/docker rm "$(docker ps -q --filter=name=^/%p-%i_)" > /dev/null 2>&1'
 ExecStartPre=/bin/bash -c 'docker history neo4j:$DOCKER_APP_VERSION > /dev/null 2>&1 || docker pull neo4j:$DOCKER_APP_VERSION'
 
+# hacky fix to wait for the etcd cluster to fully come up on restart
+ExecStartPre=/bin/bash -c '/usr/bin/sleep 10'
+
 # We echo this into a file to allow us to bypass the 2048 character limit on a single command.
 ExecStartPre=/bin/bash -c 'echo "export ENV=$(/usr/bin/etcdctl get /ft/config/environment_tag);" > /tmp/env'
 ExecStartPre=/bin/bash -c 'echo "export INITIAL_MEMBERS=$(fleetctl list-machines -fields ip -no-legend | xargs -I{} echo {}:5000 | tr \'\n\' \',\' | rev | cut -c 2- | rev)" >> /tmp/env'
