@@ -59,6 +59,7 @@ ExecStart=/bin/sh -c '\
     --env "NEO4J_metrics_graphite_interval=3m" \
     --env "NEO4J_metrics_prefix=coco.services.$ENV.neo4j.%i" \
     --env "NEO4J_dbms_tx__log_rotation_retention__policy=2 days" \
+    --env "NEO4J_dbms_threads_worker__count=64" \
     --network="host" neo4j:$DOCKER_APP_VERSION;'
 
 ExecStartPost=/bin/bash -c 'etcdctl set /ft/services/neo4j/healthcheck false;'
