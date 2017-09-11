@@ -24,6 +24,7 @@ ExecStartPre=/bin/bash -c 'echo "export INITIAL_MEMBERS=$(/usr/bin/etcdctl get /
 ExecStartPre=/bin/bash -c 'echo "export ADDRESS=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)" >> /tmp/env'
 ExecStartPre=/bin/bash -c 'echo "export HEAP_SIZE=$(/usr/bin/etcdctl get /ft/config/neo4j/dbms-memory-heap-maxSize)" >> /tmp/env'
 ExecStartPre=/bin/bash -c 'echo "export PAGECACHE_SIZE=$(/usr/bin/etcdctl get /ft/config/neo4j/dbms-memory-pagecache-size)" >> /tmp/env'
+ExecStartPre=/bin/bash -c 'echo "export AUTH=$(/usr/bin/etcdctl get /ft/_credentials/neo4j/auth_password)" >> /tmp/env'
 
 # Also see http://neo4j.com/docs/operations-manual/3.2/installation/docker/ for configuration options.
 ExecStart=/bin/sh -c '\
@@ -31,7 +32,7 @@ ExecStart=/bin/sh -c '\
     /usr/bin/docker run --rm --name %p-%i_$(uuidgen) \
     -v /vol/neo4j/data:/data \
     -v /vol/neo4j/logs:/logs \
-    --env "NEO4J_AUTH=neo4j/${/usr/bin/etcdctl get /ft/_credentials/neo4j/auth_password}" \
+    --env "NEO4J_AUTH=neo4j/$AUTH" \
     --env "NEO4J_dbms_mode=READ_REPLICA" \
     --env "NEO4J_causal__clustering_expected__core__cluster__size=3" \
     --env "NEO4J_causal__clustering_initial__discovery__members=$INITIAL_MEMBERS" \
