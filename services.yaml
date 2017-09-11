@@ -13,9 +13,9 @@ services:
 - name: splunk-forwarder.service
 - name: tunnel-registrator.service
   version: v1.0.3
-- name: neo4j@.service
+- name: neo4j-read-replica@.service
   version: 3.2.2-enterprise
-  count: 3
+  count: 1
   sequentialDeployment: true
 - name: alb-dns-registrator.service
   version: v1.0.0

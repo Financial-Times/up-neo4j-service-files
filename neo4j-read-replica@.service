@@ -32,7 +32,7 @@ ExecStart=/bin/sh -c '\
     -v /vol/neo4j/data:/data \
     -v /vol/neo4j/logs:/logs \
     --env "NEO4J_dbms_security_auth__enabled=false" \
-    --env "NEO4J_dbms_mode=CORE" \
+    --env "NEO4J_dbms_mode=READ_REPLICA" \
     --env "NEO4J_causal__clustering_expected__core__cluster__size=3" \
     --env "NEO4J_causal__clustering_initial__discovery__members=$INITIAL_MEMBERS" \
     --env "NEO4J_causal__clustering_discovery__listen__address=0.0.0.0:5000" \
