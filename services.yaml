@@ -11,7 +11,6 @@ services:
 - name: neo4j-logger@.service
   count: 3
 - name: splunk-forwarder.service
-  desiredState: loaded
 - name: tunnel-registrator.service
   version: v1.0.3
 - name: neo4j@.service
